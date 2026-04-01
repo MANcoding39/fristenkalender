@@ -96,7 +96,7 @@ def index():
             "tage": tage
         })
 
-   html = """
+    html = """
 <!DOCTYPE html>
 <html lang="de">
 <head>
