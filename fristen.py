@@ -84,8 +84,7 @@ def index():
     for f in fristen:
         status_text, status_class, tage = berechne_status(f["datum"])
         fristen_liste.append({
-            "id
-         f["id"],
+            "id": f["id"],
             "name": f["name"],
             "datum": f["datum"],
             "aktenzeichen": f["aktenzeichen"],
