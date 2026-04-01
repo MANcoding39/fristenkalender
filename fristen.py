@@ -97,297 +97,462 @@ def index():
         })
 
     html = """
-<!DOCTYPE html>
-<html lang="de">
-<head>
-<meta charset="UTF-8">
-<title>Kanzlei Dashboard</title>
+    <!DOCTYPE html>
+    <html lang="de">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Fristen & Aufgaben</title>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
 
-<style>
-body {
-    font-family: 'Segoe UI', sans-serif;
-    margin: 0;
-    background: linear-gradient(135deg, #0f172a, #1e293b);
-    color: #e2e8f0;
-}
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+                background:
+                    radial-gradient(circle at top left, rgba(80,120,255,0.18), transparent 30%),
+                    radial-gradient(circle at top right, rgba(0,200,255,0.14), transparent 28%),
+                    linear-gradient(135deg, #0b1020, #131a2f 45%, #1a2440 100%);
+                color: #f5f7fb;
+                min-height: 100vh;
+                padding: 24px;
+            }
 
-h1 {
-    text-align: center;
-    margin-bottom: 20px;
-}
+            .container {
+                max-width: 1400px;
+                margin: 0 auto;
+            }
 
-.topbar {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-}
+            h1 {
+                margin: 0 0 8px 0;
+                font-size: 34px;
+                font-weight: 800;
+                letter-spacing: 0.5px;
+            }
 
-.tab-btn {
-    padding: 10px 20px;
-    border-radius: 12px;
-    border: none;
-    background: rgba(255,255,255,0.08);
-    color: white;
-    cursor: pointer;
-    transition: 0.2s;
-}
+            .subtitle {
+                color: #aeb9d6;
+                margin-bottom: 28px;
+                font-size: 15px;
+            }
 
-.tab-btn:hover {
-    background: rgba(255,255,255,0.2);
-}
+            .topbar {
+                display: flex;
+                gap: 12px;
+                margin-bottom: 24px;
+                flex-wrap: wrap;
+            }
 
-.tab-btn.active {
-    background: #3b82f6;
-}
+            .tab-btn {
+                background: rgba(255,255,255,0.08);
+                color: #fff;
+                border: 1px solid rgba(255,255,255,0.15);
+                border-radius: 16px;
+                padding: 12px 20px;
+                cursor: pointer;
+                font-weight: bold;
+                transition: all 0.2s ease;
+                backdrop-filter: blur(10px);
+            }
 
-.section {
-    display: none;
-}
+            .tab-btn:hover {
+                transform: translateY(-2px);
+                background: rgba(255,255,255,0.14);
+                box-shadow: 0 10px 24px rgba(0,0,0,0.22);
+            }
 
-.section.active {
-    display: block;
-}
+            .section {
+                display: none;
+            }
 
-.card {
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(12px);
-    border-radius: 20px;
-    padding: 20px;
-    margin: 20px auto;
-    width: 90%;
-    max-width: 1100px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-}
+            .section.active {
+                display: block;
+            }
 
-input, select, textarea, button {
-    width: 100%;
-    padding: 10px;
-    border-radius: 10px;
-    border: none;
-    margin: 5px 0;
-    background: rgba(255,255,255,0.1);
-    color: white;
-}
+            .card {
+                background: rgba(255,255,255,0.08);
+                border: 1px solid rgba(255,255,255,0.12);
+                border-radius: 26px;
+                padding: 24px;
+                margin-bottom: 24px;
+                box-shadow: 0 14px 34px rgba(0,0,0,0.22);
+                backdrop-filter: blur(14px);
+            }
 
-button {
-    background: #3b82f6;
-    cursor: pointer;
-    font-weight: bold;
-}
+            .card h2 {
+                margin-top: 0;
+                margin-bottom: 18px;
+                font-size: 24px;
+            }
 
-button:hover {
-    background: #2563eb;
-}
+            input, select, textarea, button {
+                padding: 13px 14px;
+                margin: 6px 0;
+                border-radius: 16px;
+                border: 1px solid rgba(255,255,255,0.15);
+                font-size: 14px;
+                width: 100%;
+                box-sizing: border-box;
+            }
 
-.small-btn {
-    width: auto;
-    padding: 6px 12px;
-}
+            input, select, textarea {
+                background: rgba(255,255,255,0.07);
+                color: #fff;
+                outline: none;
+            }
 
-.delete-btn {
-    background: #ef4444;
-}
+            input::placeholder,
+            textarea::placeholder {
+                color: #b9c4de;
+            }
 
-.done-btn {
-    background: #22c55e;
-}
+            textarea {
+                min-height: 100px;
+                resize: vertical;
+            }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+            button {
+                background: linear-gradient(135deg, #4d7fff, #6d4dff);
+                color: white;
+                border: none;
+                cursor: pointer;
+                font-weight: bold;
+                transition: all 0.2s ease;
+                box-shadow: 0 8px 18px rgba(77,127,255,0.28);
+            }
 
-th, td {
-    padding: 10px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-}
+            button:hover {
+                transform: translateY(-1px);
+                filter: brightness(1.05);
+            }
 
-.badge {
-    padding: 5px 10px;
-    border-radius: 999px;
-    font-size: 12px;
-}
+            .small-btn {
+                width: auto;
+                padding: 9px 15px;
+                font-size: 13px;
+                border-radius: 12px;
+                margin-right: 6px;
+                margin-top: 4px;
+            }
 
-.verstrichen { background: #7f1d1d; }
-.dringend { background: #9a3412; }
-.bald { background: #854d0e; }
-.ausstehend { background: #065f46; }
-.erledigt { background: #1e40af; }
+            .delete-btn {
+                background: linear-gradient(135deg, #d83c3c, #a72222);
+                box-shadow: 0 8px 18px rgba(216,60,60,0.22);
+            }
 
-.task-card {
-    background: rgba(255,255,255,0.06);
-    padding: 15px;
-    border-radius: 15px;
-    margin-bottom: 10px;
-}
+            .done-btn {
+                background: linear-gradient(135deg, #20b86d, #178752);
+                box-shadow: 0 8px 18px rgba(32,184,109,0.22);
+            }
 
-details summary {
-    cursor: pointer;
-    font-weight: bold;
-}
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 10px;
+                overflow: hidden;
+                border-radius: 20px;
+                background: rgba(255,255,255,0.04);
+            }
 
-.footer {
-    position: fixed;
-    bottom: 10px;
-    right: 15px;
-    font-size: 12px;
-    opacity: 0.7;
-}
-</style>
+            th, td {
+                padding: 14px;
+                border-bottom: 1px solid rgba(255,255,255,0.08);
+                text-align: left;
+                vertical-align: top;
+            }
 
-<script>
-function showTab(tabId, el) {
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            th {
+                background: rgba(255,255,255,0.08);
+                color: #d9e3ff;
+            }
 
-    document.getElementById(tabId).classList.add('active');
-    el.classList.add('active');
-}
-</script>
+            tr:hover td {
+                background: rgba(255,255,255,0.03);
+            }
 
-</head>
-<body>
+            .badge {
+                display: inline-block;
+                padding: 7px 12px;
+                border-radius: 999px;
+                font-size: 12px;
+                font-weight: bold;
+            }
 
-<h1>⚖️ Kanzlei Dashboard</h1>
+            .verstrichen {
+                background: rgba(255,90,90,0.18);
+                color: #ff8f8f;
+            }
 
-<div class="topbar">
-    <button class="tab-btn active" onclick="showTab('fristen', this)">Fristen</button>
-    <button class="tab-btn" onclick="showTab('aufgaben', this)">Aufgaben</button>
-    <button class="tab-btn" onclick="showTab('mitarbeiter', this)">Mitarbeiter</button>
-</div>
+            .dringend {
+                background: rgba(255,170,90,0.18);
+                color: #ffc37e;
+            }
 
-<!-- FRISTEN -->
-<div id="fristen" class="section active">
-<div class="card">
-<h2>Neue Frist</h2>
-<form method="post" action="/add_frist">
-<input name="name" placeholder="Bezeichnung" required>
-<input type="date" name="datum" required>
-<input name="aktenzeichen" placeholder="Aktenzeichen">
-<select name="benutzer">
-<option value="">Benutzer</option>
-{% for m in mitarbeiter %}
-<option value="{{ m['name'] }}">{{ m['name'] }}</option>
-{% endfor %}
-</select>
-<button>Speichern</button>
-</form>
-</div>
+            .bald {
+                background: rgba(255,230,90,0.18);
+                color: #ffe98d;
+            }
 
-<div class="card">
-<h2>Fristen</h2>
-<table>
-<tr>
-<th>Frist</th><th>Datum</th><th>AZ</th><th>Status</th><th>Aktion</th>
-</tr>
+            .ausstehend {
+                background: rgba(90,255,150,0.18);
+                color: #8bffbc;
+            }
 
-{% for f in fristen %}
-<tr>
-<td>{{ f.name }}</td>
-<td>{{ f.datum }}</td>
-<td>{{ f.aktenzeichen }}</td>
-<td>
-{% if f.erledigt %}
-<span class="badge erledigt">Erledigt</span>
-{% else %}
-<span class="badge {{ f.status_class }}">{{ f.status_text }}</span>
-{% endif %}
-</td>
-<td>
-<form method="post" action="/toggle_frist/{{ f.id }}">
-<button class="small-btn done-btn">✔</button>
-</form>
-<form method="post" action="/delete_frist/{{ f.id }}">
-<button class="small-btn delete-btn">✖</button>
-</form>
-</td>
-</tr>
-{% endfor %}
+            .erledigt {
+                background: rgba(110,170,255,0.18);
+                color: #9cc3ff;
+            }
 
-</table>
-</div>
-</div>
+            .task-card {
+                border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 22px;
+                padding: 18px;
+                margin-bottom: 16px;
+                background: rgba(255,255,255,0.05);
+                box-shadow: 0 10px 26px rgba(0,0,0,0.16);
+            }
 
-<!-- AUFGABEN -->
-<div id="aufgaben" class="section">
-<div class="card">
-<h2>Neue Aufgabe</h2>
-<form method="post" action="/add_aufgabe">
-<select name="mitarbeiter">
-<option>Mitarbeiter</option>
-{% for m in mitarbeiter %}
-<option value="{{ m['name'] }}">{{ m['name'] }}</option>
-{% endfor %}
-</select>
+            details summary {
+                cursor: pointer;
+                font-weight: bold;
+                margin-bottom: 10px;
+                font-size: 15px;
+            }
 
-<input name="aktenzeichen" placeholder="Aktenzeichen">
-<input name="senden_an" placeholder="Senden an">
-<input name="versandweg" placeholder="Versandweg">
-<textarea name="aufgabe" placeholder="Aufgabe" required></textarea>
-<input name="anhang" placeholder="Anhang">
-<textarea name="notizen" placeholder="Notizen"></textarea>
+            .grid-2 {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+            }
 
-<button>Speichern</button>
-</form>
-</div>
+            .copyright {
+                position: fixed;
+                bottom: 16px;
+                right: 20px;
+                font-size: 12px;
+                color: rgba(255,255,255,0.55);
+                background: rgba(0,0,0,0.22);
+                padding: 8px 12px;
+                border-radius: 999px;
+                backdrop-filter: blur(8px);
+                border: 1px solid rgba(255,255,255,0.08);
+            }
 
-<div class="card">
-<h2>Aufgaben</h2>
+            @media (max-width: 900px) {
+                .grid-2 {
+                    grid-template-columns: 1fr;
+                }
 
-{% for a in aufgaben %}
-<div class="task-card">
-<details>
-<summary>{{ a['mitarbeiter'] }} – {{ a['aufgabe'][:40] }}</summary>
+                table {
+                    display: block;
+                    overflow-x: auto;
+                    white-space: nowrap;
+                }
 
-<p><b>AZ:</b> {{ a['aktenzeichen'] }}</p>
-<p><b>Aufgabe:</b> {{ a['aufgabe'] }}</p>
-<p><b>Notizen:</b> {{ a['notizen'] }}</p>
+                body {
+                    padding: 14px;
+                }
 
-<form method="post" action="/toggle_aufgabe/{{ a['id'] }}">
-<button class="small-btn done-btn">Erledigt</button>
-</form>
+                .card {
+                    padding: 18px;
+                }
 
-<form method="post" action="/delete_aufgabe/{{ a['id'] }}">
-<button class="small-btn delete-btn">Löschen</button>
-</form>
+                h1 {
+                    font-size: 28px;
+                }
+            }
+        </style>
 
-</details>
-</div>
-{% endfor %}
+        <script>
+            function showTab(tabId) {
+                document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+                document.getElementById(tabId).classList.add('active');
+            }
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <h1>📁 Kanzlei Dashboard</h1>
+            <div class="subtitle">Fristen, Aufgaben und Mitarbeiter in einer Oberfläche</div>
 
-</div>
-</div>
+            <div class="topbar">
+                <button class="tab-btn" onclick="showTab('fristen')">Fristen</button>
+                <button class="tab-btn" onclick="showTab('aufgaben')">Aufgaben</button>
+                <button class="tab-btn" onclick="showTab('mitarbeiter')">Mitarbeiter</button>
+            </div>
 
-<!-- MITARBEITER -->
-<div id="mitarbeiter" class="section">
-<div class="card">
-<h2>Mitarbeiter</h2>
-<form method="post" action="/add_mitarbeiter">
-<input name="name" placeholder="Name">
-<button>Hinzufügen</button>
-</form>
+            <!-- FRISTEN -->
+            <div id="fristen" class="section active">
+                <div class="card">
+                    <h2>Neue Frist</h2>
+                    <form method="post" action="/add_frist">
+                        <div class="grid-2">
+                            <input name="name" placeholder="Frist / Bezeichnung" required>
+                            <input type="date" name="datum" required>
+                            <input name="aktenzeichen" placeholder="Aktenzeichen">
+                            <select name="benutzer">
+                                <option value="">Benutzer auswählen</option>
+                                {% for m in mitarbeiter %}
+                                    <option value="{{ m['name'] }}">{{ m['name'] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit">Frist speichern</button>
+                    </form>
+                </div>
 
-{% for m in mitarbeiter %}
-<p>
-{{ m['name'] }}
-<form method="post" action="/delete_mitarbeiter/{{ m['id'] }}">
-<button class="small-btn delete-btn">X</button>
-</form>
-</p>
-{% endfor %}
-</div>
-</div>
+                <div class="card">
+                    <h2>Fristenübersicht</h2>
+                    <table>
+                        <tr>
+                            <th>Frist</th>
+                            <th>Datum</th>
+                            <th>AZ</th>
+                            <th>Benutzer</th>
+                            <th>Tage</th>
+                            <th>Status</th>
+                            <th>Hinzugefügt</th>
+                            <th>Aktion</th>
+                        </tr>
 
-<div class="footer">
-© Copyright by Fabian Ziems
-</div>
+                        {% for f in fristen %}
+                        <tr>
+                            <td>{{ f.name }}</td>
+                            <td>{{ f.datum }}</td>
+                            <td>{{ f.aktenzeichen }}</td>
+                            <td>{{ f.benutzer }}</td>
+                            <td>{{ f.tage }}</td>
+                            <td>
+                                {% if f.erledigt %}
+                                    <span class="badge erledigt">Erledigt</span>
+                                {% else %}
+                                    <span class="badge {{ f.status_class }}">{{ f.status_text }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ f.erstellt_am }}</td>
+                            <td>
+                                {% if not f.erledigt %}
+                                <form method="post" action="/toggle_frist/{{ f.id }}" style="display:inline;">
+                                    <button class="small-btn done-btn">Erledigt</button>
+                                </form>
+                                {% endif %}
+                                <form method="post" action="/delete_frist/{{ f.id }}" style="display:inline;">
+                                    <button class="small-btn delete-btn" onclick="return confirm('Frist wirklich löschen?')">Löschen</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
 
-</body>
-</html>
-"""
+            <!-- AUFGABEN -->
+            <div id="aufgaben" class="section">
+                <div class="card">
+                    <h2>Neue Aufgabe</h2>
+                    <form method="post" action="/add_aufgabe">
+                        <div class="grid-2">
+                            <select name="mitarbeiter">
+                                <option value="">Mitarbeiter auswählen</option>
+                                {% for m in mitarbeiter %}
+                                    <option value="{{ m['name'] }}">{{ m['name'] }}</option>
+                                {% endfor %}
+                            </select>
+                            <input name="aktenzeichen" placeholder="Aktenzeichen">
+                            <input name="senden_an" placeholder="Senden an">
+                            <input name="versandweg" placeholder="Versandweg">
+                        </div>
 
-    return render_template_string(html, fristen=fristen_liste, mitarbeiter=mitarbeiter, aufgaben=aufgaben)
+                        <textarea name="aufgabe" placeholder="Aufgabe" required></textarea>
+                        <input name="anhang" placeholder="Anhang">
+                        <textarea name="notizen" placeholder="Notizen"></textarea>
+
+                        <button type="submit">Aufgabe speichern</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h2>Aufgabenübersicht</h2>
+
+                    {% for a in aufgaben %}
+                    <div class="task-card">
+                        <details>
+                            <summary>
+                                {{ a['mitarbeiter'] or 'Kein Mitarbeiter' }} – {{ a['aufgabe'][:50] }}
+                                {% if a['erledigt'] %}
+                                    <span class="badge erledigt">Erledigt</span>
+                                {% else %}
+                                    <span class="badge ausstehend">Offen</span>
+                                {% endif %}
+                            </summary>
+
+                            <p><b>Aktenzeichen:</b> {{ a['aktenzeichen'] }}</p>
+                            <p><b>Senden an:</b> {{ a['senden_an'] }}</p>
+                            <p><b>Versandweg:</b> {{ a['versandweg'] }}</p>
+                            <p><b>Aufgabe:</b><br>{{ a['aufgabe'] }}</p>
+                            <p><b>Anhang:</b> {{ a['anhang'] }}</p>
+                            <p><b>Notizen:</b><br>{{ a['notizen'] }}</p>
+                            <p><b>Hinzugefügt:</b> {{ a['erstellt_am'] }}</p>
+
+                            {% if not a['erledigt'] %}
+                            <form method="post" action="/toggle_aufgabe/{{ a['id'] }}" style="display:inline;">
+                                <button class="small-btn done-btn">Erledigt</button>
+                            </form>
+                            {% endif %}
+                            <form method="post" action="/delete_aufgabe/{{ a['id'] }}" style="display:inline;">
+                                <button class="small-btn delete-btn" onclick="return confirm('Aufgabe wirklich löschen?')">Löschen</button>
+                            </form>
+                        </details>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- MITARBEITER -->
+            <div id="mitarbeiter" class="section">
+                <div class="card">
+                    <h2>Mitarbeiter verwalten</h2>
+                    <form method="post" action="/add_mitarbeiter">
+                        <input name="name" placeholder="Neuer Mitarbeiter" required>
+                        <button type="submit">Mitarbeiter hinzufügen</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h2>Vorhandene Mitarbeiter</h2>
+                    <table>
+                        <tr>
+                            <th>Name</th>
+                            <th>Aktion</th>
+                        </tr>
+                        {% for m in mitarbeiter %}
+                        <tr>
+                            <td>{{ m['name'] }}</td>
+                            <td>
+                                <form method="post" action="/delete_mitarbeiter/{{ m['id'] }}">
+                                    <button class="small-btn delete-btn" onclick="return confirm('Mitarbeiter löschen?')">Löschen</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="copyright">© Copyright by Fabian Ziems</div>
+    </body>
+    </html>
+    """
+
+    return render_template_string(
+        html,
+        fristen=fristen_liste,
+        mitarbeiter=mitarbeiter,
+        aufgaben=aufgaben
+    )
 
 # ---------------- FRISTEN ----------------
 @app.route("/add_frist", methods=["POST"])
